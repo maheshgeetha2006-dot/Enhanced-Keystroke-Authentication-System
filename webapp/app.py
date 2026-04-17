@@ -460,8 +460,6 @@ def serve_static(path):
     return send_from_directory('static', path)
 
 
-# ─── Main ────────────────────────────────────────────────────────────────────────
-
 if __name__ == '__main__':
     ensure_data_dir()
     print("=" * 60)
@@ -472,4 +470,7 @@ if __name__ == '__main__':
     print(f"  Required Samples: {REQUIRED_SAMPLES}")
     print(f"  Max Login Attempts: {MAX_LOGIN_ATTEMPTS}")
     print("=" * 60)
-    app.run(debug=True, port=5000)
+
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
