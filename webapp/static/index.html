@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="User Authentication using Keystroke Dynamics - Enhanced with Euclidean Distance algorithm for biometric pattern matching.">
+    <title>KeyAuth | Keystroke Dynamics Authentication</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔐</text></svg>">
+</head>
+<body>
+
+    <!-- ─── Animated Background Particles ──────────────────────────────────── -->
+    <div class="bg-particles">
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div>
+    </div>
+
+    <!-- ─── Confetti Overlay (for success) ─────────────────────────────────── -->
+    <div class="confetti-overlay" id="confettiOverlay"></div>
+
+    <!-- ─── Main App ───────────────────────────────────────────────────────── -->
+    <div class="app-container">
+
+        <!-- Header -->
+        <header class="app-header">
+            <div class="app-logo">
+                <div class="logo-icon">🔐</div>
+                <h1 class="app-title">KeyAuth</h1>
+            </div>
+            <p class="app-subtitle">Keystroke Dynamics Authentication</p>
+        </header>
+
+        <!-- Auth Card -->
+        <main class="auth-card" id="authCard">
+
+            <!-- Tab Switcher -->
+            <div class="tab-container" id="tabContainer">
+                <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+                <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">Register</button>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- LOGIN PAGE                                                     -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <div class="page active" id="loginPage">
+
+                <div class="form-group">
+                    <label class="form-label" for="loginUsername">Username</label>
+                    <input type="text" class="form-input" id="loginUsername" 
+                           placeholder="Enter your username" autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="loginPassword">Password</label>
+                    <input type="password" class="form-input password-input" id="loginPassword" 
+                           placeholder="Type your password naturally" autocomplete="current-password">
+                    
+                    <!-- Live Typing Feedback -->
+                    <div class="typing-indicator" id="loginTypingIndicator">
+                        <div class="typing-dots">
+                            <div class="typing-dot" id="loginDot1"></div>
+                            <div class="typing-dot" id="loginDot2"></div>
+                            <div class="typing-dot" id="loginDot3"></div>
+                        </div>
+                        <div class="speed-bar-container">
+                            <div class="speed-bar" id="loginSpeedBar"></div>
+                        </div>
+                        <span class="typing-speed-label" id="loginSpeedLabel">Ready</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="loginBtn" onclick="handleLogin()">
+                    🔓 Authenticate
+                </button>
+
+                <!-- Result Display -->
+                <div class="result-container" id="loginResult">
+                    <div class="result-icon" id="loginResultIcon"></div>
+                    <div class="result-title" id="loginResultTitle"></div>
+                    <div class="result-message" id="loginResultMessage"></div>
+
+                    <div class="match-display" id="matchDisplay">
+                        <div class="percentage-ring" id="percentageRing">
+                            <svg width="100" height="100">
+                                <circle class="ring-bg" cx="50" cy="50" r="40"></circle>
+                                <circle class="ring-fill" id="ringFill" cx="50" cy="50" r="40"></circle>
+                            </svg>
+                            <div class="percentage-value" id="percentageValue">0%</div>
+                        </div>
+                        <div class="match-details">
+                            <div class="match-detail-row">
+                                <span class="match-detail-label">Distance</span>
+                                <span class="match-detail-value" id="detailDistance">—</span>
+                            </div>
+                            <div class="match-detail-row">
+                                <span class="match-detail-label">Threshold</span>
+                                <span class="match-detail-value" id="detailThreshold">—</span>
+                            </div>
+                            <div class="match-detail-row">
+                                <span class="match-detail-label">Verdict</span>
+                                <span class="match-detail-value" id="detailVerdict">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="attempts-indicator" id="attemptsIndicator">
+                        <div class="attempt-dot" id="attemptDot1"></div>
+                        <div class="attempt-dot" id="attemptDot2"></div>
+                        <div class="attempt-dot" id="attemptDot3"></div>
+                        <span class="attempts-text" id="attemptsText"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <!-- REGISTRATION PAGE                                             -->
+            <!-- ═══════════════════════════════════════════════════════════════ -->
+            <div class="page" id="registerPage">
+
+                <div class="form-group">
+                    <label class="form-label" for="regUsername">Choose Username</label>
+                    <input type="text" class="form-input" id="regUsername" 
+                           placeholder="Enter a unique username" autocomplete="username">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="regPassword">Create Password</label>
+                    <input type="password" class="form-input password-input" id="regPassword" 
+                           placeholder="At least 4 characters" autocomplete="new-password">
+                </div>
+
+                <div class="reg-instructions" id="regInstructions">
+                    <strong>🔑 Typing Pattern Enrollment</strong><br><br>
+                    <span class="reg-step-badge">1</span> Choose username & password above<br>
+                    <span class="reg-step-badge">2</span> Type your password <strong>5 times</strong> in the box below<br>
+                    <span class="reg-step-badge">3</span> Type naturally and consistently each time<br>
+                    <span class="reg-step-badge">4</span> Press <strong>Enter</strong> after each sample
+                </div>
+
+                <!-- Sample Counter -->
+                <div class="sample-counter" id="sampleCounter" style="display: none;">
+                    <div class="sample-dots" id="sampleDots">
+                        <div class="sample-dot current" id="sampleDot1">1</div>
+                        <div class="sample-dot" id="sampleDot2">2</div>
+                        <div class="sample-dot" id="sampleDot3">3</div>
+                        <div class="sample-dot" id="sampleDot4">4</div>
+                        <div class="sample-dot" id="sampleDot5">5</div>
+                    </div>
+                </div>
+                <p class="sample-label" id="sampleStatusLabel" style="display:none;">Sample 1 of 5 — Type your password and press Enter</p>
+
+                <!-- Sample Input -->
+                <div class="form-group" id="sampleInputGroup" style="display: none;">
+                    <label class="form-label" for="sampleInput">Type Password Sample</label>
+                    <input type="password" class="form-input password-input" id="sampleInput" 
+                           placeholder="Type your password here...">
+                    
+                    <!-- Live Typing Feedback -->
+                    <div class="typing-indicator" id="regTypingIndicator">
+                        <div class="typing-dots">
+                            <div class="typing-dot" id="regDot1"></div>
+                            <div class="typing-dot" id="regDot2"></div>
+                            <div class="typing-dot" id="regDot3"></div>
+                        </div>
+                        <div class="speed-bar-container">
+                            <div class="speed-bar" id="regSpeedBar"></div>
+                        </div>
+                        <span class="typing-speed-label" id="regSpeedLabel">Ready</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="regStartBtn" onclick="startRegistration()">
+                    📝 Begin Enrollment
+                </button>
+
+                <button class="btn-primary" id="regSubmitBtn" style="display: none;" onclick="submitRegistration()" disabled>
+                    ✅ Complete Registration
+                </button>
+
+                <!-- Registration Result -->
+                <div class="result-container" id="regResult">
+                    <div class="result-icon" id="regResultIcon"></div>
+                    <div class="result-title" id="regResultTitle"></div>
+                    <div class="result-message" id="regResultMessage"></div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            Keystroke Dynamics Authentication System &bull; Euclidean Distance Algorithm<br>
+            <span style="opacity: 0.6;">B.Tech Mini Project &bull; Enhanced Version</span>
+        </footer>
+    </div>
+
+    <script src="/app.js"></script>
+</body>
+</html>

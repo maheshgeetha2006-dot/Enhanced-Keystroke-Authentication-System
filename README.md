@@ -1,35 +1,129 @@
-# User Authentication Using Keystroke Dynamics
+# Enhanced Keystroke Dynamics Authentication System
 
-The unique typing patterns of users can be used as a signature to identify genuine users from imposters. Keystroke signature fuses the simplicity of passwords with increased reliability from biometrics. Unlike other biometrics like IRIS, face, fingerprints etc which need special hardware infrastructure, keystroke biometrics are economical to implement and can be easily integrated into the existing computer security systems. They help augment the existing security infrastructure by being part of a multilevel authentication system. Using Machine learning algorithms, a high accuracy rate in detecting imposters has been demonstrated in this project. The machine learning model is trained with the typing patterns of the subjects. Then it is provided with test data with patterns from the subject as well as from imposters posing as the subject. The model demonstrates the ability to discern genuine users from imposters based on the test pattern’s similarity to the trained model for the subject.
+## Overview
 
-### Data Collection
-**There was't any dataset present of keystroke patterns so build standalone desktop application to collect keystrokes from users. The create a typing pattern used calculated 3 different type of timings
-for each key pressed.**
-  * **Hold time** – time between press and  release of a key.
-  * **Keydown-Keydown time** – time between the pressing of consecutive keys.
-  * **Keyup-Keydown time** – time between the release of one key and the press of next key.
-  <img src = "Images/Keytimings.png">
-  
-  <img src = "http://g.recordit.co/B6qfWgeBup.gif" >
-  
-  **Follwed above procedure and collected data from 15 different users**
-### Feature selection
-For the password typed for each key pressed measured hold time, Keydown-Keydown time,Keyup-Keydown time in milliseconds and this were considered as features.
+This project implements an advanced user authentication system using keystroke dynamics, a behavioral biometric technique that identifies users based on their typing patterns.
 
- <img src= "Images/Data.png">
- 
-### Training Machine Learning Models.
-As the problem is classification of user whether the user is genuine or imposter, supervised learning algorithms like logistic regression, support vector machine and K-nearest-neighbour were used.Used sklearn libraries for training the models.
+Unlike traditional password-based authentication, this system enhances security by analyzing how a user types rather than just what they type.
 
-### Test & evaluate the ML Model
-* Train Test Split, where the dataset is divided into two different datasets, training set and testing set.Train the data with training set and test the data on testing set and evaluate the accuracy of the model
-* Cross Validation: Split dataset into K equal partitions(folds), Use partition 1 as testing set and remaining K-1 partitions as training set and calculate accuracy. Repeat the process K number of times and use average of all the accuracies to evaluate model performance.
+The system is implemented as a web application using Flask and includes an improved matching algorithm and user-friendly interface.
 
-### Results
-<img src="Images/Result.png">
+---
 
-<img src= "Images/Confusion.png">
+## Key Features
 
-### References
-* https://ieeexplore.ieee.org/abstract/document/5270346
+* Keystroke-based authentication
+* Euclidean Distance algorithm for pattern matching
+* Match percentage display
+* Retry mechanism (maximum 3 attempts)
+* Typing consistency analysis using multiple samples
+* Modern user interface with typing feedback
+
+---
+
+## Concept: Keystroke Dynamics
+
+Every user has a unique typing rhythm. This system captures:
+
+* Dwell Time – Time a key is pressed
+* Flight Time – Time between consecutive keys
+
+These features form a typing signature for each user.
+
+---
+
+## Algorithm Used
+
+The system uses the Euclidean Distance algorithm to compare typing patterns.
+
+Formula:
+
+d = sqrt(sum (xi - yi)^2)
+
+Where:
+
+* xi = stored typing pattern
+* yi = current typing pattern
+
+Decision:
+
+* If distance is less than threshold, user is accepted
+* Otherwise, user is rejected
+
+---
+
+## System Architecture
+
+User → Frontend UI → Keystroke Capture → Backend (Flask)
+→ Feature Extraction → Euclidean Distance Algorithm
+→ Database → Decision → Result
+
+---
+
+## Workflow
+
+Registration:
+
+* User enters password multiple times (5 samples)
+* System calculates average typing pattern
+* Data is stored
+
+Login:
+
+* User enters password
+* Typing pattern is captured
+* Compared with stored pattern
+* Match percentage is calculated
+* Access is granted or denied
+
+---
+
+## Technologies Used
+
+* Frontend: HTML, CSS, JavaScript
+* Backend: Python (Flask)
+* Database: JSON or SQLite
+* Algorithm: Euclidean Distance
+
+---
+
+## Results
+
+* Genuine users are authenticated successfully
+* Imposters are detected effectively
+* Match percentage provides clear feedback
+
+---
+
+## Advantages
+
+* No additional hardware required
+* More secure than traditional passwords
+* Easy to implement
+* User-friendly system
+
+---
+
+## Limitations
+
+* Typing behavior may vary
+* Requires initial training data
+* Slight delay during login
+
+---
+
+## Future Enhancements
+
+* Integration with machine learning models
+* Continuous authentication
+* Multi-factor authentication
+* Mobile support
+
+---
+
+## Conclusion
+
+This project enhances authentication by combining password security with keystroke dynamics. By implementing the Euclidean Distance algorithm and adding features such as match percentage and retry mechanism, the system improves both accuracy and usability.
+
+---
 
