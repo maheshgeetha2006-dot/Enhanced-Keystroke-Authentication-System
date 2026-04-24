@@ -203,21 +203,33 @@ function animateCounter(id, target) {
 // ═══════════════════════════════════════════════════════════════════════════════
 
 function resetLogin() {
-    loginTimings = [];
+    loginTimings.length = 0;  // Clear in-place to keep the same reference
     document.getElementById('login-form').reset();
     document.getElementById('login-results').style.display = 'none';
 
     const btn = document.getElementById('btn-login');
     btn.classList.remove('loading');
     btn.disabled = false;
+    btn.style.display = '';  // Restore visibility
+    btn.querySelector('.btn-label').textContent = 'Authenticate';  // Restore label
 
     deactivateFeedback('login-typing-feedback');
+
+    // Re-bind keystroke capture to ensure timings are captured
+    setupLoginCapture();
 }
 
 // Set up keystroke capture on the login password field
+function setupLoginCapture() {
+    const oldInput = document.getElementById('login-password');
+    // Clone and replace to remove old event listeners
+    const freshInput = oldInput.cloneNode(true);
+    oldInput.parentNode.replaceChild(freshInput, oldInput);
+    createKeystrokeCapture(freshInput, loginTimings, 'login-typing-feedback');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    const loginPwd = document.getElementById('login-password');
-    createKeystrokeCapture(loginPwd, loginTimings, 'login-typing-feedback');
+    setupLoginCapture();
 
     // Visual-only feedback on username field
     const loginUser = document.getElementById('login-username');
@@ -276,12 +288,17 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         verdict.style.color = data.success ? 'var(--sage)' : 'var(--terracotta)';
 
         if (data.success) {
+            // Hide the authenticate button on success — no longer needed
+            btn.style.display = 'none';
             showOverlay('success', 'Access granted',
                 `Welcome back! Your typing pattern matched at ${matchPct}%.`);
         } else if (data.blocked) {
+            btn.style.display = 'none';
             showOverlay('error', 'Account blocked',
                 data.message || 'Too many failed attempts. Contact an administrator.');
         } else {
+            // Change button to "Try Again" on failure
+            btn.querySelector('.btn-label').textContent = 'Try Again';
             showToast(data.message || 'Authentication failed.', 'error');
             const card = document.querySelector('.surface-card');
             if (card) {

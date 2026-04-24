@@ -256,7 +256,7 @@ def register():
     # Average the patterns for consistency
     avg_pattern = compute_average_pattern(feature_sets)
 
-    # Store user data
+    # Store user dataq
     users[username] = {
         'password': password,
         'pattern': avg_pattern,
